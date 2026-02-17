@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const routes = require('./routes');
+const { syncDatabase } = require('./models');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,10 +28,13 @@ app.use((err, req, res, next) => {
         message: err.message});
 });
 
-app.listen(PORT, () => {
+syncDatabase().then(() => {
+    app.listen(PORT, () => {
     console.log(`Backend server is running on http://localhost:${PORT}`);
     console.log(`API endpoints available at http://localhost:${PORT}/api`);
 });
+})
+
 
 
 
