@@ -12,9 +12,9 @@ import {
   WiTornado
 } from 'react-icons/wi';
 import { WiHumidity } from 'react-icons/wi';
-import { FaWind } from 'react-icons/fa';
+import { FaWind, FaStar } from 'react-icons/fa';
 
-const CityCard = ({ city }) => {
+const CityCard = ({ city, isFavorite }) => {
 
     const getScoreColor = (score) => {
     if (score >= 75) return 'bg-green-100 border-green-500 text-green-800';
@@ -49,7 +49,12 @@ const CityCard = ({ city }) => {
   const scoreColorClass = getScoreColor(city.comfortScore);
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 relative">
+      {isFavorite && (
+        <div className="absolute top-3 right-3">
+          <FaStar className="text-yellow-500" size={24} />
+        </div>
+      )}
 
       <div className="flex justify-between items-start mb-4">
         <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold text-lg">

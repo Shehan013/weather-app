@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { weatherAPI, setAuthToken } from '../services/api';
+import { weatherAPI, userAPI, setAuthToken } from '../services/api';
 import CityCard from './CityCard';
+import { FaFilter } from 'react-icons/fa';
 
 
 const WeatherList = () => {
   const [cities, setCities] = useState([]);
+  const [favoriteCities, setFavoriteCities] = useState([]);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
@@ -20,13 +23,17 @@ const WeatherList = () => {
       setError(null);
 
       if (isAuthenticated) {
-      try {
-        const token = await getAccessTokenSilently();
-        setAuthToken(token);
-      } catch (err) {
-        console.log('Could not get token, continuing without auth');
+        try {
+          const token = await getAccessTokenSilently();
+          setAuthToken(token);
+          
+          const favoritesResponse = await userAPI.getPreference('favorite_cities');
+          const favorites = favoritesResponse.data.data || [];
+          setFavoriteCities(favorites);
+        } catch (err) {
+          setFavoriteCities([]);
+        }
       }
-    }
 
       const response = await weatherAPI.getCities();
       setCities(response.data.data);
@@ -66,6 +73,29 @@ const WeatherList = () => {
     );
   }
 
+  const getSortedAndFilteredCities = () => {
+    let filteredCities = [...cities];
+    
+    if (showFavoritesOnly && isAuthenticated) {
+      filteredCities = filteredCities.filter(city => 
+        favoriteCities.includes(city.cityCode)
+      );
+    }
+    
+    return filteredCities.sort((a, b) => {
+      const aIsFavorite = favoriteCities.includes(a.cityCode);
+      const bIsFavorite = favoriteCities.includes(b.cityCode);
+      
+      if (aIsFavorite && !bIsFavorite) return -1;
+      if (!aIsFavorite && bIsFavorite) return 1;
+      
+      return a.rank - b.rank;
+    });
+  };
+
+  const displayedCities = getSortedAndFilteredCities();
+  const favoriteCount = cities.filter(city => favoriteCities.includes(city.cityCode)).length;
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 text-center">
@@ -77,9 +107,29 @@ const WeatherList = () => {
         </p>
       </div>
 
+      {isAuthenticated && favoriteCount > 0 && (
+        <div className="mb-6 flex justify-center">
+          <button
+            onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+              showFavoritesOnly
+                ? 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                : 'bg-blue-500 text-white hover:bg-blue-600'
+            }`}
+          >
+            <FaFilter />
+            {showFavoritesOnly ? `Showing ${favoriteCount} Favorites` : `Show Favorites Only (${favoriteCount})`}
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cities.map((city) => (
-          <CityCard key={city.cityCode} city={city} />
+        {displayedCities.map((city) => (
+          <CityCard 
+            key={city.cityCode} 
+            city={city}
+            isFavorite={favoriteCities.includes(city.cityCode)}
+          />
         ))}
       </div>
 
