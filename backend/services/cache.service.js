@@ -1,6 +1,6 @@
 const NodeCache = require('node-cache');
 
-class CashService {
+class CacheService {
     constructor() {
         this.cache = new NodeCache({
             stdTTL : 300,
@@ -53,4 +53,4 @@ class CashService {
     }
 }
 
-module.exports = new CashService();
+module.exports = new CacheService();
