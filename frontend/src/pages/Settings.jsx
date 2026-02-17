@@ -10,7 +10,6 @@ const Settings = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [cacheStatus, setCacheStatus] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -38,15 +37,6 @@ const Settings = () => {
       showMessage('error', 'Failed to load settings');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const loadCacheStatus = async () => {
-    try {
-      const response = await weatherAPI.getCacheStatus();
-      setCacheStatus(response.data);
-    } catch (error) {
-      console.error('Error loading cache status:', error);
     }
   };
 
@@ -170,69 +160,6 @@ const Settings = () => {
           >
             {saving ? 'Saving...' : 'Save Preferences'}
           </button>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            Cache Debug Information
-          </h2>
-          <p className="text-gray-600 mb-4">
-            View the current cache status and performance metrics.
-          </p>
-
-          <button
-            onClick={loadCacheStatus}
-            className="mb-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200"
-          >
-            Load Cache Status
-          </button>
-
-          {cacheStatus && (
-            <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-              <div className="flex justify-between">
-                <span className="font-semibold">Cache Status:</span>
-                <span
-                  className={`font-bold ${
-                    cacheStatus.cacheStatus === 'HIT'
-                      ? 'text-green-600'
-                      : 'text-red-600'
-                  }`}
-                >
-                  {cacheStatus.cacheStatus}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-semibold">Total Hits:</span>
-                <span>{cacheStatus.statistics.hits}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-semibold">Total Misses:</span>
-                <span>{cacheStatus.statistics.misses}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-semibold">Hit Rate:</span>
-                <span className="font-bold text-blue-600">
-                  {cacheStatus.statistics.hitsRate}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-semibold">Cached Keys:</span>
-                <span>{cacheStatus.statistics.keysCount}</span>
-              </div>
-              {cacheStatus.cachedData && (
-                <>
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Cities Cached:</span>
-                    <span>{cacheStatus.cachedData.citiesCount}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Top City:</span>
-                    <span>{cacheStatus.cachedData.topCity}</span>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
         </div>
       </main>
     </div>
