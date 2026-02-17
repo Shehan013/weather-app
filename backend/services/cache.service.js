@@ -42,7 +42,7 @@ class CashService {
                 : '0%',
             keys: this.cache.keys(),
             keysCount: this.cache.keys().length,
-            internalStats: cacheStats
+            internalStats: this.cache.getStats()
         };
     }
 
