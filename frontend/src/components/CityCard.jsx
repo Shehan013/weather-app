@@ -53,7 +53,7 @@ const CityCard = ({ city }) => {
 
       <div className="flex justify-between items-start mb-4">
         <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold text-lg">
-          #{city.rank}
+          {city.rank}
         </span>
         <div>{getWeatherIcon(city.weather.main)}</div>
       </div>
