@@ -99,6 +99,8 @@ Weighted Deviation = (6T + 3H + 1W) / 10
 T = |temperature - 24°C| / 24
 H = |humidity - 50%| / 50
 W = |windSpeed - 2 m/s| / 10
+
+24, 50 and 10 are the maximum acceptable deviations for each factor, chosen based on comfort standards and typical weather ranges.
 ```
 
 ### Ideal Conditions
