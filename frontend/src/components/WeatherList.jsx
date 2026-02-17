@@ -20,9 +20,13 @@ const WeatherList = () => {
       setError(null);
 
       if (isAuthenticated) {
+      try {
         const token = await getAccessTokenSilently();
         setAuthToken(token);
+      } catch (err) {
+        console.log('Could not get token, continuing without auth');
       }
+    }
 
       const response = await weatherAPI.getCities();
       setCities(response.data.data);
