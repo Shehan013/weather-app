@@ -6,9 +6,17 @@ const LoginButton = () => {
 
   if (isAuthenticated) return null;
 
+  const handleLogin = async () => {
+    try {
+      await loginWithRedirect();
+    } catch (error) {
+      console.error('Login error:', error);
+    }
+  };
+
   return (
     <button
-      onClick={() => loginWithRedirect()}
+      onClick={handleLogin}
       className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200"
     >
       Log In

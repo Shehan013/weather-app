@@ -13,26 +13,36 @@ export const Auth0ProviderWithHistory = ({ children }) => {
     navigate(appState?.returnTo || window.location.pathname);
   };
 
-  if (!domain || !clientId || !audience) {
+  if (!domain || !clientId) {
     return (
       <div style={{ padding: '20px', color: 'red' }}>
         <h2>Configuration Error</h2>
         <p>Auth0 environment variables not configured properly.</p>
-        <p>Check your .env file.</p>
+        <p>Domain: {domain || 'MISSING'}</p>
+        <p>ClientId: {clientId || 'MISSING'}</p>
+        <p>Audience: {audience || 'NOT SET'}</p>
       </div>
     );
+  }
+
+  const authorizationParams = {
+    redirect_uri: window.location.origin,
+    scope: "openid profile email"
+  };
+
+  // Only add audience if it's set
+  if (audience) {
+    authorizationParams.audience = audience;
   }
 
   return (
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      authorizationParams={{
-        redirect_uri: window.location.origin,
-        audience: audience,
-        scope: "openid profile email"
-      }}
+      authorizationParams={authorizationParams}
       onRedirectCallback={onRedirectCallback}
+      useRefreshTokens={true}
+      cacheLocation="localstorage"
     >
       {children}
     </Auth0Provider>
