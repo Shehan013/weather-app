@@ -11,7 +11,7 @@ class WeatherService {
 
     loadCities() {
         try{
-            const citiesPath = path.join(__dirname, '/../../cities.json');
+            const citiesPath = path.join(__dirname, '../../cities.json');
             const citiesData = fs.readFileSync(citiesPath, 'utf-8');
             const parsed = JSON.parse(citiesData);
             return parsed.List;
